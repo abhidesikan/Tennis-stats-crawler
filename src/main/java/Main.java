@@ -10,7 +10,6 @@ import java.io.IOException;
  */
 public class Main {
 
-
     /*
         Proof of concept
      */
