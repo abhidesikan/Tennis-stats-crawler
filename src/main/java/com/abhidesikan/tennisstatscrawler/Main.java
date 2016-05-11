@@ -1,7 +1,11 @@
+package com.abhidesikan.tennisstatscrawler;
+
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 
@@ -14,6 +18,8 @@ public class Main {
         Proof of concept
      */
 
+    final static Logger logger = LoggerFactory.getLogger(Main.class);
+
     public static void testJSoup(String url) {
         try {
             Document doc = Jsoup.connect(url).get();
@@ -22,8 +28,9 @@ public class Main {
             for(Element table: elements) {
                 for(Element head: table.select("thead")) {
                     Elements tr = head.select("tr");
+                    logger.info("Displaying header elements:");
                     for(Element th: tr.select("th")) {
-                        System.out.println(th.text());
+                        System.out.println(th);
                     }
                 }
             }
