@@ -10,23 +10,19 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 
 /**
- * Created by abhidesikan on 5/6/16.
+ * Created by abhidesikan on 5/11/16.
  */
-public class Main {
+public class TournamentInfoExtractor {
 
-    final static Logger logger = LoggerFactory.getLogger(Main.class);
+    final Logger logger = LoggerFactory.getLogger(TournamentInfoExtractor.class);
 
-    final static String resultsUrl = "http://www.atpworldtour.com/en/scores/results-archive?year=";
+    private String tournamentUrl = "http://www.atpworldtour.com/en/scores/results-archive?year=";
 
 
-
-    /*
-        Proof of concept
-     */
-
-    public static void testJSoup(String url) {
-        try {
-            Document doc = Jsoup.connect(url).get();
+    public void getTournamentInformationForYear(String year) {
+        tournamentUrl = tournamentUrl.concat(year);
+        try{
+            Document doc = Jsoup.connect(tournamentUrl).get();
             Elements elements = doc.select(".scores-results-archive");
 
             for(Element table: elements) {
@@ -37,17 +33,16 @@ public class Main {
                         System.out.println(th.text());
                     }
                 }
+                logger.info("Displaying body elements:");
+                for(Element body: table.select("tbody")) {
+                    for(Element tr: body.select("tr")) {
+                        System.out.println(tr.text());
+                    }
+                }
             }
-
         } catch (IOException e) {
             e.printStackTrace();
         }
 
-    }
-
-    public static void main(String args[]) {
-       // testJSoup("http://www.atpworldtour.com/en/scores/results-archive?year=2016");
-        TournamentInfoExtractor infoExtractor = new TournamentInfoExtractor();
-        infoExtractor.getTournamentInformationForYear("2016");
     }
 }
