@@ -1,5 +1,6 @@
 package com.abhidesikan.tennisstatscrawler;
 
+import com.abhidesikan.tennistippingpredictor.OddsExtractor;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -45,9 +46,12 @@ public class Main {
 
     }
 
-    public static void main(String args[]) {
+    public static void main(String args[]) throws Exception{
        // testJSoup("http://www.atpworldtour.com/en/scores/results-archive?year=2016");
         TournamentInfoExtractor infoExtractor = new TournamentInfoExtractor();
+        OddsExtractor oddsExtractor = new OddsExtractor();
         infoExtractor.getTournamentInformationForYear("2016");
+ //       oddsExtractor.getOddsFromUrl("http://www.oddschecker.com/tennis/mens-rogers-cup/kevin-anderson-v-stan-wawrinka/winner");
+ //       oddsExtractor.getElements();
     }
 }

@@ -11,6 +11,8 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Created by abhidesikan on 5/11/16.
@@ -50,9 +52,29 @@ public class TournamentInfoExtractor {
                                     tr.select(".tourney-details> .info-area > .item-details > a[href]> span[class = item-value]").text().split(" ")[1]});
                         }
                         resultsArchive.setTotalPrizeMoney(tr.select(".tourney-details.fin-commit > .info-area > .item-details > span[class = item-value]").text());
-                        System.out.println(resultsArchive.getTotalPrizeMoney());
-                        resultsArchive.setSurface(tr.select(".tourney-details > .info-area > .item-details").text());
-                        System.out.println(resultsArchive.getSurface());
+                        resultsArchive.setSurface(tr.select(".tourney-details > .info-area > .item-details").text().split(" ")[4] + " " + tr.select(".tourney-details > .info-area > .item-details").text().split(" ")[5]);
+                        String winner = tr.select(".tourney-detail-winner").text();
+                        String regex = Pattern.quote("SGL:") + "(.*?)" + Pattern.quote("DBL:");
+                        String regex2 = "DBL:(.*)";
+
+                        Pattern pattern = Pattern.compile(regex);
+                        Pattern pattern2 = Pattern.compile(regex2);
+                        Matcher matcher = pattern.matcher(winner);
+                        Matcher matcher2 = pattern2.matcher(winner);
+                        String singlesWinner = null, doublesWinner = null;
+                        while (matcher.find()) {
+                            singlesWinner = matcher.group(1);
+                        }
+                        while(matcher2.find()) {
+                            doublesWinner = matcher2.group(1);
+                        }
+                        resultsArchive.setWinner(new String[]{singlesWinner, doublesWinner});
+                        String url = tr.select((".tourney-details > .button-border")).attr("href");
+                        System.out.println(url);
+                        if(!url.isEmpty()) {
+                            resultsArchive.setTournamentCode(Integer.parseInt(url.split(("/"))[5]));
+                        }
+                        resultsArchiveList.add(resultsArchive);
 
                     }
                 }
