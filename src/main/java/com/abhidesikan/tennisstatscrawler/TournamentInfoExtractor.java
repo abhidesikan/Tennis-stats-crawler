@@ -34,20 +34,18 @@ public class TournamentInfoExtractor {
             for(Element table: elements) {
                 for(Element head: table.select("thead")) {
                     Elements tr = head.select("tr");
-                    logger.info("Displaying header elements:");
                     for(Element th: tr.select("th")) {
                         System.out.println(th.text());
                     }
                 }
-                logger.info("Displaying body elements:");
                 for(Element body: table.select("tbody")) {
-                    for(Element tr: body.select("tr")) {
+                    for (Element tr : body.select("tr")) {
                         ResultsArchive resultsArchive = new ResultsArchive();
                         resultsArchive.setTournament(tr.select("span[class = tourney-title]").text());
                         resultsArchive.setDate(tr.select("span[class = tourney-dates]").text());
                         resultsArchive.setLocation(tr.select("span[class = tourney-location]").text());
                         String drawSpan = tr.select(".tourney-details> .info-area > .item-details > a[href]> span[class = item-value]").text();
-                        if(!drawSpan.isEmpty()) {
+                        if (!drawSpan.isEmpty()) {
                             resultsArchive.setDraw(new String[]{tr.select(".tourney-details> .info-area > .item-details > a[href]> span[class = item-value]").text().split(" ")[0],
                                     tr.select(".tourney-details> .info-area > .item-details > a[href]> span[class = item-value]").text().split(" ")[1]});
                         }
@@ -65,20 +63,19 @@ public class TournamentInfoExtractor {
                         while (matcher.find()) {
                             singlesWinner = matcher.group(1);
                         }
-                        while(matcher2.find()) {
+                        while (matcher2.find()) {
                             doublesWinner = matcher2.group(1);
                         }
                         resultsArchive.setWinner(new String[]{singlesWinner, doublesWinner});
                         String url = tr.select((".tourney-details > .button-border")).attr("href");
-                        System.out.println(url);
-                        if(!url.isEmpty()) {
+                        if (!url.isEmpty()) {
                             resultsArchive.setTournamentCode(Integer.parseInt(url.split(("/"))[5]));
                         }
                         resultsArchiveList.add(resultsArchive);
-
                     }
                 }
             }
+            Parser.writeJSONToFile(resultsArchiveList);
         } catch (IOException e) {
             e.printStackTrace();
         }
