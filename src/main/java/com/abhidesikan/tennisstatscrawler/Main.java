@@ -50,8 +50,8 @@ public class Main {
        // testJSoup("http://www.atpworldtour.com/en/scores/results-archive?year=2016");
         TournamentInfoExtractor infoExtractor = new TournamentInfoExtractor();
         OddsExtractor oddsExtractor = new OddsExtractor();
-        infoExtractor.getTournamentInformationForYear("2016");
- //       oddsExtractor.getOddsFromUrl("http://www.oddschecker.com/tennis/mens-rogers-cup/kevin-anderson-v-stan-wawrinka/winner");
- //       oddsExtractor.getElements();
+//        infoExtractor.getTournamentInformationForYear("2011");
+        infoExtractor.getTournamentInformationForAllYears();
+
     }
 }

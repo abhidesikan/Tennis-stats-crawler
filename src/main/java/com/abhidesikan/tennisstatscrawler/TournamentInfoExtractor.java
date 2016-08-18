@@ -10,6 +10,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -20,24 +21,29 @@ import java.util.regex.Pattern;
 public class TournamentInfoExtractor {
 
     final Logger logger = LoggerFactory.getLogger(TournamentInfoExtractor.class);
-
-    private String tournamentUrl = "http://www.atpworldtour.com/en/scores/results-archive?year=";
     private List<ResultsArchive> resultsArchiveList = new ArrayList<ResultsArchive>();
+
+    public void getTournamentInformationForAllYears() {
+        Calendar now = Calendar.getInstance();
+        int currentYear = now.get(Calendar.YEAR);
+        int initialYear = 2010;
+        for(; initialYear<= currentYear; initialYear++) {
+            getTournamentInformationForYear(String.valueOf(initialYear));
+        }
+
+    }
 
     public void getTournamentInformationForYear(String year) {
 
+        String tournamentUrl = "http://www.atpworldtour.com/en/scores/results-archive?year=";
         tournamentUrl = tournamentUrl.concat(year);
+        logger.info("Extracting data for year "+year);
+
         try{
             Document doc = Jsoup.connect(tournamentUrl).get();
             Elements elements = doc.select(".scores-results-archive");
 
             for(Element table: elements) {
-                for(Element head: table.select("thead")) {
-                    Elements tr = head.select("tr");
-                    for(Element th: tr.select("th")) {
-                        System.out.println(th.text());
-                    }
-                }
                 for(Element body: table.select("tbody")) {
                     for (Element tr : body.select("tr")) {
                         ResultsArchive resultsArchive = new ResultsArchive();
@@ -46,8 +52,12 @@ public class TournamentInfoExtractor {
                         resultsArchive.setLocation(tr.select("span[class = tourney-location]").text());
                         String drawSpan = tr.select(".tourney-details> .info-area > .item-details > a[href]> span[class = item-value]").text();
                         if (!drawSpan.isEmpty()) {
-                            resultsArchive.setDraw(new String[]{tr.select(".tourney-details> .info-area > .item-details > a[href]> span[class = item-value]").text().split(" ")[0],
-                                    tr.select(".tourney-details> .info-area > .item-details > a[href]> span[class = item-value]").text().split(" ")[1]});
+                            if(drawSpan.split(" ").length > 1) {
+                                resultsArchive.setDraw(new String[]{tr.select(".tourney-details> .info-area > .item-details > a[href]> span[class = item-value]").text().split(" ")[0],
+                                        tr.select(".tourney-details> .info-area > .item-details > a[href]> span[class = item-value]").text().split(" ")[1]});
+                            } else {
+                                resultsArchive.setDraw(new String[]{tr.select(".tourney-details> .info-area > .item-details > a[href]> span[class = item-value]").text().split(" ")[0], ""});
+                                }
                         }
                         resultsArchive.setTotalPrizeMoney(tr.select(".tourney-details.fin-commit > .info-area > .item-details > span[class = item-value]").text());
                         resultsArchive.setSurface(tr.select(".tourney-details > .info-area > .item-details").text().split(" ")[4] + " " + tr.select(".tourney-details > .info-area > .item-details").text().split(" ")[5]);
@@ -75,7 +85,9 @@ public class TournamentInfoExtractor {
                     }
                 }
             }
-            Parser.writeJSONToFile(resultsArchiveList);
+            Parser.writeJSONToFile(resultsArchiveList, year);
+            resultsArchiveList.clear();
+
         } catch (IOException e) {
             e.printStackTrace();
         }

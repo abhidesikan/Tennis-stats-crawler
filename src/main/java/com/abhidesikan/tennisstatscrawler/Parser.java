@@ -20,10 +20,11 @@ import java.util.List;
 public class Parser {
 
     final static Logger logger = LoggerFactory.getLogger(Parser.class);
-    private static List<JSONObject> objList = new ArrayList<>();
+    private static final String TOURNAMENT_RESULTS_FILE = "_tournament_results.json";
 
-    public static void writeJSONToFile(List<ResultsArchive> resultsArchiveList) {
-
+    public static void writeJSONToFile(List<ResultsArchive> resultsArchiveList, String year) {
+        List<JSONObject> objList = new ArrayList<>();
+        logger.info(year + " year");
         for(ResultsArchive result : resultsArchiveList) {
             JSONObject tournamentObject = new JSONObject();
             tournamentObject.put("Tournament", result.getTournament());
@@ -50,10 +51,11 @@ public class Parser {
             objList.add(tournamentObject);
         }
 
-        try(BufferedWriter writer = Files.newBufferedWriter(Paths.get("test.json"))){
+        try(BufferedWriter writer = Files.newBufferedWriter(Paths.get(year+TOURNAMENT_RESULTS_FILE))) {
             for(JSONObject tournamentObject : objList) {
                 writer.write(tournamentObject.toJSONString() + "\n");
             }
+            objList.clear();
         } catch (IOException e) {
             logger.error("Unable to write to file "+e);
         }
