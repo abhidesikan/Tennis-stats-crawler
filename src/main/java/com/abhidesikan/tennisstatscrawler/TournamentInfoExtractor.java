@@ -26,7 +26,7 @@ public class TournamentInfoExtractor {
     public void getTournamentInformationForAllYears() {
         Calendar now = Calendar.getInstance();
         int currentYear = now.get(Calendar.YEAR);
-        int initialYear = 2010;
+        int initialYear = 1915;
         for(; initialYear<= currentYear; initialYear++) {
             getTournamentInformationForYear(String.valueOf(initialYear));
         }
@@ -40,7 +40,7 @@ public class TournamentInfoExtractor {
         logger.info("Extracting data for year "+year);
 
         try{
-            Document doc = Jsoup.connect(tournamentUrl).get();
+            Document doc = Jsoup.connect(tournamentUrl).timeout(10*1000).get();
             Elements elements = doc.select(".scores-results-archive");
 
             for(Element table: elements) {
