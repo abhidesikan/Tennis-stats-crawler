@@ -89,7 +89,7 @@ public class TournamentInfoExtractor {
             resultsArchiveList.clear();
 
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.error("Exception "+e);
         }
 
     }

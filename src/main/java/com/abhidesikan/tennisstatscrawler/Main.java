@@ -1,5 +1,6 @@
 package com.abhidesikan.tennisstatscrawler;
 
+import com.abhidesikan.mongodb.DBConnector;
 import com.abhidesikan.tennistippingpredictor.OddsExtractor;
 import com.mongodb.*;
 import com.mongodb.client.MongoCollection;
@@ -67,6 +68,9 @@ public class Main {
 //        infoExtractor.getTournamentInformationForYear("2011");
  //       infoExtractor.getTournamentInformationForAllYears();
  //       testMongoDb();
+        DBConnector dbConnector = new DBConnector();
+        dbConnector.connectToDatabase("ATP_Database");
+        dbConnector.storeCollectionToDatabase("ResultsArchive");
 
     }
 }
