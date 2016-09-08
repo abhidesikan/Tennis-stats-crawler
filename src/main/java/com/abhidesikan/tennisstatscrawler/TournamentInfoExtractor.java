@@ -22,6 +22,7 @@ public class TournamentInfoExtractor {
 
     final Logger logger = LoggerFactory.getLogger(TournamentInfoExtractor.class);
     private List<ResultsArchive> resultsArchiveList = new ArrayList<ResultsArchive>();
+    private static final String TOURNAMENT_URL = "http://www.atpworldtour.com/en/scores/results-archive?year=";
 
     public void getTournamentInformationForAllYears() {
         Calendar now = Calendar.getInstance();
@@ -35,8 +36,8 @@ public class TournamentInfoExtractor {
 
     public void getTournamentInformationForYear(String year) {
 
-        String tournamentUrl = "http://www.atpworldtour.com/en/scores/results-archive?year=";
-        tournamentUrl = tournamentUrl.concat(year);
+        String tournamentUrl;
+        tournamentUrl = TOURNAMENT_URL + year;
         logger.info("Extracting data for year "+year);
 
         try{
@@ -81,6 +82,7 @@ public class TournamentInfoExtractor {
                         if (!url.isEmpty()) {
                             resultsArchive.setTournamentCode(Integer.parseInt(url.split(("/"))[5]));
                         }
+                        resultsArchive.setYear(year);
                         resultsArchiveList.add(resultsArchive);
                     }
                 }

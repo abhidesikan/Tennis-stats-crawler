@@ -20,8 +20,8 @@ import java.util.List;
 public class Parser {
 
     final static Logger logger = LoggerFactory.getLogger(Parser.class);
-    private static final String RESULTS_ARCHIVE_DIR = "ResultsArchiveFiles";
-    private static final String RESULTS_ARCHIVE_FILE = "_tournament_results.json";
+    public static final String RESULTS_ARCHIVE_DIR = "ResultsArchiveFiles";
+    public static final String RESULTS_ARCHIVE_FILE = "_tournament_results.json";
 
     public static void writeJSONToFile(List<ResultsArchive> resultsArchiveList, String year) {
         List<JSONObject> objList = new ArrayList<>();
@@ -47,6 +47,7 @@ public class Parser {
             winner.put("DBL", result.getWinner()[1]);
             winnerArray.add(winner);
             tournamentObject.put("Winner", winnerArray);
+            tournamentObject.put("Year", result.getYear());
 
             objList.add(tournamentObject);
         }

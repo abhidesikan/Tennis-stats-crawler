@@ -66,11 +66,12 @@ public class Main {
         TournamentInfoExtractor infoExtractor = new TournamentInfoExtractor();
         OddsExtractor oddsExtractor = new OddsExtractor();
 //        infoExtractor.getTournamentInformationForYear("2011");
- //       infoExtractor.getTournamentInformationForAllYears();
+  //      infoExtractor.getTournamentInformationForAllYears();
  //       testMongoDb();
         DBConnector dbConnector = new DBConnector();
         dbConnector.connectToDatabase("ATP_Database");
-        dbConnector.storeCollectionToDatabase("ResultsArchive");
+        MongoCollection collection = dbConnector.getCollection("ResultsArchive");
+        dbConnector.generateDocumentForAllYearsInCollection(collection);
 
     }
 }

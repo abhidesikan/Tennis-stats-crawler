@@ -1,5 +1,6 @@
 package com.abhidesikan.mongodb;
 
+import com.abhidesikan.tennisstatscrawler.Parser;
 import com.mongodb.MongoClient;
 import com.mongodb.ServerAddress;
 import com.mongodb.client.MongoCollection;
@@ -7,6 +8,7 @@ import com.mongodb.client.MongoDatabase;
 import org.bson.Document;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -15,6 +17,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -45,7 +48,7 @@ public class DBConnector {
         logger.info("Connection to " + databaseName + " established succesfully");
     }
 
-    public void storeCollectionToDatabase(String collectionName) throws Exception {
+    public MongoCollection getCollection(String collectionName) {
         switch (collectionName) {
             case "ResultsArchive":
                 logger.info("Connecting to collection " + collectionName);
@@ -54,8 +57,21 @@ public class DBConnector {
             default:
                 logger.error("Invalid collection name. Choose from - ResultsArchive, TournamentArchive, Head2Head or MatchStatsArchive");
         }
+        return collection;
+    }
 
-        String tournamentFile = "ResultsArchiveFiles/1915_tournament_results.json";
+    public void generateDocumentForAllYearsInCollection(MongoCollection collection) {
+        Calendar now = Calendar.getInstance();
+        int currentYear = now.get(Calendar.YEAR);
+        int initialYear = 1915;
+        for(; initialYear<= currentYear; initialYear++) {
+            generateDocumentForYearInCollection(collection, String.valueOf(initialYear));
+        }
+    }
+
+    public void generateDocumentForYearInCollection(MongoCollection collection, String year) {
+
+        String tournamentFile = Parser.RESULTS_ARCHIVE_DIR+"/"+year+Parser.RESULTS_ARCHIVE_FILE;
         List objList = new ArrayList<>();
         try (BufferedReader reader = Files.newBufferedReader(Paths.get(tournamentFile))) {
             objList = reader.lines().collect(Collectors.toList());
@@ -64,12 +80,17 @@ public class DBConnector {
         }
 
         Document resultsArchiveDocument;
-        for(Object object : objList) {
-            String test = (String) object;
-            JSONParser jsonParser = new JSONParser();
-            JSONObject jsonObject = (JSONObject) jsonParser.parse(test);
-            resultsArchiveDocument = Document.parse(jsonObject.toJSONString());
-            collection.insertOne(resultsArchiveDocument);
+        try{
+            for(Object object : objList) {
+                String test = (String) object;
+                JSONParser jsonParser = new JSONParser();
+                JSONObject jsonObject = (JSONObject) jsonParser.parse(test);
+                resultsArchiveDocument = Document.parse(jsonObject.toJSONString());
+                collection.insertOne(resultsArchiveDocument);
+            }
+        } catch (ParseException e) {
+            logger.error("Unable to parse JSON string "+ e);
         }
+
     }
 }
