@@ -1,6 +1,6 @@
 package com.abhidesikan.tennisstatscrawler;
 
-import com.abhidesikan.pages.ResultsArchive;
+import com.abhidesikan.pages.TournamentInfoArchive;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -21,7 +21,7 @@ import java.util.regex.Pattern;
 public class TournamentInfoExtractor {
 
     final Logger logger = LoggerFactory.getLogger(TournamentInfoExtractor.class);
-    private List<ResultsArchive> resultsArchiveList = new ArrayList<ResultsArchive>();
+    private List<TournamentInfoArchive> tournamentInfoArchiveList = new ArrayList<TournamentInfoArchive>();
     private static final String TOURNAMENT_URL = "http://www.atpworldtour.com/en/scores/results-archive?year=";
 
     public void getTournamentInformationForAllYears() {
@@ -38,30 +38,29 @@ public class TournamentInfoExtractor {
 
         String tournamentUrl;
         tournamentUrl = TOURNAMENT_URL + year;
-        logger.info("Extracting data for year "+year);
 
-        try{
+        try {
             Document doc = Jsoup.connect(tournamentUrl).timeout(10*1000).get();
             Elements elements = doc.select(".scores-results-archive");
-
-            for(Element table: elements) {
-                for(Element body: table.select("tbody")) {
+            logger.info("Extracting tournament info for year :" + year);
+            for(Element table : elements) {
+                for(Element body : table.select("tbody")) {
                     for (Element tr : body.select("tr")) {
-                        ResultsArchive resultsArchive = new ResultsArchive();
-                        resultsArchive.setTournament(tr.select("span[class = tourney-title]").text());
-                        resultsArchive.setDate(tr.select("span[class = tourney-dates]").text());
-                        resultsArchive.setLocation(tr.select("span[class = tourney-location]").text());
+                        TournamentInfoArchive infoArchive = new TournamentInfoArchive();
+                        infoArchive.setTournament(tr.select("span[class = tourney-title]").text());
+                        infoArchive.setDate(tr.select("span[class = tourney-dates]").text());
+                        infoArchive.setLocation(tr.select("span[class = tourney-location]").text());
                         String drawSpan = tr.select(".tourney-details> .info-area > .item-details > a[href]> span[class = item-value]").text();
                         if (!drawSpan.isEmpty()) {
                             if(drawSpan.split(" ").length > 1) {
-                                resultsArchive.setDraw(new String[]{tr.select(".tourney-details> .info-area > .item-details > a[href]> span[class = item-value]").text().split(" ")[0],
+                                infoArchive.setDraw(new String[]{tr.select(".tourney-details> .info-area > .item-details > a[href]> span[class = item-value]").text().split(" ")[0],
                                         tr.select(".tourney-details> .info-area > .item-details > a[href]> span[class = item-value]").text().split(" ")[1]});
                             } else {
-                                resultsArchive.setDraw(new String[]{tr.select(".tourney-details> .info-area > .item-details > a[href]> span[class = item-value]").text().split(" ")[0], ""});
+                                infoArchive.setDraw(new String[]{tr.select(".tourney-details> .info-area > .item-details > a[href]> span[class = item-value]").text().split(" ")[0], ""});
                                 }
                         }
-                        resultsArchive.setTotalPrizeMoney(tr.select(".tourney-details.fin-commit > .info-area > .item-details > span[class = item-value]").text());
-                        resultsArchive.setSurface(tr.select(".tourney-details > .info-area > .item-details").text().split(" ")[4] + " " + tr.select(".tourney-details > .info-area > .item-details").text().split(" ")[5]);
+                        infoArchive.setTotalPrizeMoney(tr.select(".tourney-details.fin-commit > .info-area > .item-details > span[class = item-value]").text());
+                        infoArchive.setSurface(tr.select(".tourney-details > .info-area > .item-details").text().split(" ")[4] + " " + tr.select(".tourney-details > .info-area > .item-details").text().split(" ")[5]);
                         String winner = tr.select(".tourney-detail-winner").text();
                         String regex = Pattern.quote("SGL:") + "(.*?)" + Pattern.quote("DBL:");
                         String regex2 = "DBL:(.*)";
@@ -77,22 +76,24 @@ public class TournamentInfoExtractor {
                         while (matcher2.find()) {
                             doublesWinner = matcher2.group(1);
                         }
-                        resultsArchive.setWinner(new String[]{singlesWinner, doublesWinner});
+                        infoArchive.setWinner(new String[]{singlesWinner, doublesWinner});
                         String url = tr.select((".tourney-details > .button-border")).attr("href");
                         if (!url.isEmpty()) {
-                            resultsArchive.setTournamentCode(Integer.parseInt(url.split(("/"))[5]));
+                            infoArchive.setTournamentCode(Integer.parseInt(url.split(("/"))[5]));
                         }
-                        resultsArchive.setYear(year);
-                        resultsArchiveList.add(resultsArchive);
+                        infoArchive.setYear(year);
+                        tournamentInfoArchiveList.add(infoArchive);
                     }
                 }
             }
-            Parser.writeJSONToFile(resultsArchiveList, year);
-            resultsArchiveList.clear();
+            Parser.writeJSONToFile(tournamentInfoArchiveList, year);
+            tournamentInfoArchiveList.clear();
 
         } catch (IOException e) {
-            logger.error("Exception "+e);
+            logger.error("Exception " + e);
         }
 
     }
+
+
 }

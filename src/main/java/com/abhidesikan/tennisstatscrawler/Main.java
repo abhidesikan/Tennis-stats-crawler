@@ -53,7 +53,7 @@ public class Main {
         MongoClient mongoClient = new MongoClient(new ServerAddress("localhost", 27017));
         MongoDatabase db = mongoClient.getDatabase("test");
         MongoCollection<Document> collection = db.getCollection("testColl");
-        System.out.println(collection +"collection");
+        logger.info(collection + "collection");
         Document document =  new Document();
         document.put("_id", 1);
         document.put("Name", "Abhishek");
@@ -61,17 +61,20 @@ public class Main {
         collection.insertOne(document);
     }
 
-    public static void main(String args[]) throws Exception{
+    public static void main(String args[]) throws Exception {
        // testJSoup("http://www.atpworldtour.com/en/scores/results-archive?year=2016");
         TournamentInfoExtractor infoExtractor = new TournamentInfoExtractor();
         OddsExtractor oddsExtractor = new OddsExtractor();
-//        infoExtractor.getTournamentInformationForYear("2011");
-  //      infoExtractor.getTournamentInformationForAllYears();
+   //     infoExtractor.getTournamentInformationForYear("1995");
+    //    infoExtractor.getTournamentInformationForAllYears();
  //       testMongoDb();
-        DBConnector dbConnector = new DBConnector();
+ /*       DBConnector dbConnector = new DBConnector();
         dbConnector.connectToDatabase("ATP_Database");
-        MongoCollection collection = dbConnector.getCollection("ResultsArchive");
+        MongoCollection collection = dbConnector.getCollection("TournamentInfoArchive");
         dbConnector.generateDocumentForAllYearsInCollection(collection);
+*/
+        TournamentResultsExtractor resultsExtractor = new TournamentResultsExtractor();
+        resultsExtractor.getTournamentResults("brisbane", 339, "2016", "singles");
 
     }
 }
