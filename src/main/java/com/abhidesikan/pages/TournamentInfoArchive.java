@@ -5,7 +5,7 @@ package com.abhidesikan.pages;
  */
 
 
-public class ResultsArchive {
+public class TournamentInfoArchive {
 
     private String tournament;
     private String[] draw = new String[2];
