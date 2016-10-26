@@ -34,24 +34,51 @@ public class TournamentResultsExtractor {
         try {
             Document document = Jsoup.connect(resultsUrl).timeout(10*1000).get();
             Elements elements = document.select(".scores-results-content");
-            for(Element table : elements) {
-                TournamentResultsArchive resultsArchive = new TournamentResultsArchive();
-                for(Element head : table.select("thead")) {
-                    for(Element tr : head.select("tr")) {
+            for (Element table : elements) {
+                for (Element head : table.select("thead")) {
+                    TournamentResultsArchive resultsArchive = new TournamentResultsArchive();
+                    for (Element tr : head.select("tr")) {
                         resultsArchive.setRound(tr.text());
                         resultsArchive.setMatchType(matchType);
                     }
+                    tournamentResultsArchiveList.add(resultsArchive);
                 }
-                for(Element body : table.select("tbody")) {
-                    MatchDetail matchDetail = new MatchDetail();
-                    for(Element tb : body.select("tr")) {
-                        System.out.println(tb.select(".day-table-seed").text());
-    //                    matchDetail.setWinnerSeed(Integer.parseInt(tb.select("span[class = day-table-seed]").text()));
+                int index = 0;
+                for (Element body : table.select("tbody")) {
+                    TournamentResultsArchive tournamentResultsArchive = tournamentResultsArchiveList.get(index);
+                    List<MatchDetail> matchDetails = new ArrayList<>();
+                    for (Element tb : body.select("tr")) {
+                        MatchDetail matchDetail = new MatchDetail();
+                        String winnerSeed = tb.select(".day-table-seed").get(0).text().replaceAll("[()]", "");
+                        String loserSeed = tb.select(".day-table-seed").get(1).text().replaceAll("[()]", "");
+                        matchDetail.setWinnerSeed(winnerSeed);
+                        matchDetail.setOpponentSeed(loserSeed);
+                        matchDetail.setWinner(tb.select(".day-table-name").get(0).text());
+                        matchDetail.setOpponent(tb.select(".day-table-name").get(1).text());
+                        String scores[] = tb.select(".day-table-score").text().split(" ");
+                        String finalScore = "";
+                        for (String score : scores) {
+                            if(2 < score.length()) {
+                                finalScore = finalScore + score.substring(0,2) + "(" + score.substring(2,score.length()) + ")" + " ";
+                            } else {
+                                finalScore = finalScore + score + " ";
+                            }
+                        }
+                        matchDetail.setScore(finalScore);
+                        matchDetails.add(matchDetail);
                     }
+                    tournamentResultsArchive.setMatchDetails(matchDetails);
+                    index++;
                 }
             }
-
-
+            for (TournamentResultsArchive resultsArchive : tournamentResultsArchiveList) {
+                System.out.println(resultsArchive.getRound());
+                List<MatchDetail> matchDetails = resultsArchive.getMatchDetails();
+                for(MatchDetail matchDetail : matchDetails) {
+                    System.out.println(matchDetail.getScore());
+                    System.out.println(matchDetail.getWinner());
+                }
+            }
 
         } catch (Exception e) {
             logger.error("Exception occurred " + e);

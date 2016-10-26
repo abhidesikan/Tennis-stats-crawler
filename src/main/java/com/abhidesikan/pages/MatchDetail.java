@@ -5,18 +5,19 @@ package com.abhidesikan.pages;
  */
 public class MatchDetail {
 
-    private int winnerSeed;
+    private String winnerSeed;
     private String winner;
     private String opponent;
-    private int loserSeed;
+    private String opponentSeed;
     private String score;
 
-    public int getWinnerSeed() {
-        return winnerSeed;
+
+    public String getScore() {
+        return score;
     }
 
-    public void setWinnerSeed(int winnerSeed) {
-        this.winnerSeed = winnerSeed;
+    public void setScore(String score) {
+        this.score = score;
     }
 
     public String getWinner() {
@@ -27,7 +28,24 @@ public class MatchDetail {
         this.winner = winner;
     }
 
+    public String getWinnerSeed() {
+        return winnerSeed;
+    }
+
+    public void setWinnerSeed(String winnerSeed) {
+        this.winnerSeed = winnerSeed;
+    }
+
+    public String getOpponentSeed() {
+        return opponentSeed;
+    }
+
+    public void setOpponentSeed(String opponentSeed) {
+        this.opponentSeed = opponentSeed;
+    }
+
     public String getOpponent() {
+
         return opponent;
     }
 
@@ -35,19 +53,4 @@ public class MatchDetail {
         this.opponent = opponent;
     }
 
-    public int getLoserSeed() {
-        return loserSeed;
-    }
-
-    public void setLoserSeed(int loserSeed) {
-        this.loserSeed = loserSeed;
-    }
-
-    public String getScore() {
-        return score;
-    }
-
-    public void setScore(String score) {
-        this.score = score;
-    }
 }

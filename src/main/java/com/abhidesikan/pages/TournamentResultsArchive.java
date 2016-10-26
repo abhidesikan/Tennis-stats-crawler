@@ -10,7 +10,7 @@ public class TournamentResultsArchive {
 
     private String round;
     private String matchType;
-    private List<MatchDetail> matches = new ArrayList<MatchDetail>();
+    private List<MatchDetail> matchDetails = new ArrayList<MatchDetail>();
 
     public String getRound() {
         return round;
@@ -28,11 +28,11 @@ public class TournamentResultsArchive {
         this.matchType = matchType;
     }
 
-    public List<MatchDetail> getMatches() {
-        return matches;
+    public List<MatchDetail> getMatchDetails() {
+        return matchDetails;
     }
 
-    public void setMatches(List<MatchDetail> matches) {
-        this.matches = matches;
+    public void setMatchDetails(List<MatchDetail> matchDetails) {
+        this.matchDetails = matchDetails;
     }
 }
