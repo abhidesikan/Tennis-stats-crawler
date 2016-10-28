@@ -86,7 +86,7 @@ public class TournamentInfoExtractor {
                     }
                 }
             }
-            Parser.writeJSONToFile(tournamentInfoArchiveList, year);
+            Parser.writeTournamentInfoJSONToFile(tournamentInfoArchiveList, year);
             tournamentInfoArchiveList.clear();
 
         } catch (IOException e) {

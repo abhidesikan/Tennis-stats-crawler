@@ -24,7 +24,7 @@ public class Parser {
     public static final String TOURNAMENT_INFO_ARCHIVE_DIR = "TournamentInfoArchiveFiles";
     public static final String TOURNAMENT_INFO_ARCHIVE_FILE = "_tournament_info.json";
 
-    public static void writeJSONToFile(List<TournamentInfoArchive> tournamentInfoArchiveList, String year) {
+    public static void writeTournamentInfoJSONToFile(List<TournamentInfoArchive> tournamentInfoArchiveList, String year) {
         List<JSONObject> objList = new ArrayList<>();
         for(TournamentInfoArchive infoArchive : tournamentInfoArchiveList) {
             JSONObject tournamentObject = new JSONObject();
